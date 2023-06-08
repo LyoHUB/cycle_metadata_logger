@@ -145,7 +145,7 @@ class ParamsApp:
     def write_to_yaml(self, params):
         now = datetime.now()
         datetime_str = now.strftime("%m-%d-%Y_%H-%M")
-        filename = f"{self.user_entry.get().replace(' ', '_')}_{datetime_str}_params.yaml"
+        filename = f"{self.user_entry.get().replace(' ', '_')}_{datetime_str}.yaml"
         with open(filename, 'w') as f:
             yaml.dump(params, f)
 
