@@ -137,9 +137,9 @@ class ParamsApp:
         datetime_str = now.strftime("%m/%d/%Y %H:%M")
         self.params['DateTime'] = datetime_str
 
-        self.write_to_yaml(self.params)
+        fname = self.write_to_yaml(self.params)
 
-        messagebox.showinfo("Success", "Parameters saved to params.yaml")
+        messagebox.showinfo("Success", f"Parameters saved to {fname}")
         self.root.quit()
 
     def write_to_yaml(self, params):
@@ -157,6 +157,7 @@ class ParamsApp:
         fname = f"{date}_{lyo_abbrev}_{user_initials}.yaml"
         with open(fname, 'w') as f:
             yaml.dump(params, f)
+        return fname
 
     def search(self):
         search_params = {  # Note: Assumes all fields are optional for search
