@@ -104,7 +104,7 @@ class ParamsApp:
         return combo_box
 
     def create_labeled_checkbutton(self, text):
-        var = tk.IntVar()
+        var = tk.BooleanVar()
         checkbutton = tk.Checkbutton(self.root, text=text, variable=var)
         checkbutton.pack()
         return var
@@ -128,6 +128,7 @@ class ParamsApp:
         params.update(rfmw_params)
         params['Closed-Loop'] = self.closed_loop_checkbutton.get()
         params['Comments'] = self.comments_entry.get()
+        return params
 
     def finish(self):
         self.params = self.read_state()
