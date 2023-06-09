@@ -109,8 +109,8 @@ class ParamsApp:
         checkbutton.pack()
         return var
 
-    def finish(self):
-        self.params = {
+    def read_state(self): 
+        params = {
             'user': self.user_entry.get(),
             'vial': self.vial_option.get(),
             'lyophilizer': self.lyo_entry.get(),
@@ -121,13 +121,16 @@ class ParamsApp:
         }
         
         if self.is_rf_mw_run.get() == 1:
-            self.rfmw_params = {self.rfmw_labels[i]: entry.get() for i, entry in enumerate(self.rfmw_entries)}
+            rfmw_params = {self.rfmw_labels[i]: entry.get() for i, entry in enumerate(self.rfmw_entries)}
         else:
-            self.rfmw_params = {label: 'N/A' for label in self.rfmw_labels}
+            rfmw_params = {label: 'N/A' for label in self.rfmw_labels}
 
-        self.params.update(self.rfmw_params)
-        self.params['Closed-Loop'] = "Yes" if self.closed_loop_checkbutton.get() else "No"
-        self.params['Comments'] = self.comments_entry.get()
+        params.update(rfmw_params)
+        params['Closed-Loop'] = "Yes" if self.closed_loop_checkbutton.get() else "No"
+        params['Comments'] = self.comments_entry.get()
+
+    def finish(self):
+        self.params = self.read_state()
 
         if "" in self.params.values():
             messagebox.showinfo("Error", "All fields must be filled out")
@@ -160,20 +163,21 @@ class ParamsApp:
         return fname
 
     def search(self):
-        search_params = {  # Note: Assumes all fields are optional for search
-            'Vial': self.vial_option.get(),
-            'Lyo Name': self.lyo_entry.get(),
-            'Formulation': self.formulation_option.get(),
-            'CIN': "Yes" if self.cin_checkbutton.get() else "No",
-            'Annealing': "Yes" if self.annealing_checkbutton.get() else "No",
-            'Is RF/MW Run?': "Yes" if self.is_rf_mw_run.get() == 1 else "No",
-        }
-        if self.is_rf_mw_run.get() == 1:
-            self.rfmw_params = {self.rfmw_labels[i]: entry.get() for i, entry in enumerate(self.rfmw_entries)}
-        else:
-            self.rfmw_params = {label: 'N/A' for label in self.rfmw_labels}
-        search_params.update(self.rfmw_params)
-        search_params['Closed-Loop'] = "Yes" if self.closed_loop_checkbutton.get() else "No"
+        # search_params = {  # Note: Assumes all fields are optional for search
+        #     'Vial': self.vial_option.get(),
+        #     'Lyo Name': self.lyo_entry.get(),
+        #     'Formulation': self.formulation_option.get(),
+        #     'CIN': "Yes" if self.cin_checkbutton.get() else "No",
+        #     'Annealing': "Yes" if self.annealing_checkbutton.get() else "No",
+        #     'Is RF/MW Run?': "Yes" if self.is_rf_mw_run.get() == 1 else "No",
+        # }
+        # if self.is_rf_mw_run.get() == 1:
+        #     self.rfmw_params = {self.rfmw_labels[i]: entry.get() for i, entry in enumerate(self.rfmw_entries)}
+        # else:
+        #     self.rfmw_params = {label: 'N/A' for label in self.rfmw_labels}
+        # search_params.update(self.rfmw_params)
+        # search_params['Closed-Loop'] = "Yes" if self.closed_loop_checkbutton.get() else "No"
+        search_params = self.read_state()
 
         self.results_text.config(state='normal')
         self.results_text.delete('1.0', tk.END)
