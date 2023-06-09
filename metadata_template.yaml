@@ -1,0 +1,25 @@
+user: Isaac Wheeler
+# Lyophilizer: either LyoStar, REVO, or MicroFD
+lyophilizer: LyoStar
+# Vial size and count in the run
+vials:
+  size: SCHOTT 6R
+  count: 100
+# List ingredients; concentration is g/mL, so 5% w/v written as 0.05
+formulation:
+- comp : mannitol
+  conc : 0.05
+- comp : mAB
+  conc : 0.01
+# Controlled ice nucleation
+cin: false
+# Annealing after freezing
+annealing: false
+# Include RF heating details, as necessary.
+rf:
+  power: 50 # Nominal power in watts
+  frequency: 8   # Frequency in GHz
+closed loop: false
+comments:
+  This is just a demonstration of what we can do in YAML.
+  Multiline things work just fine.
