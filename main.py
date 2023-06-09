@@ -30,9 +30,9 @@ class ParamsApp:
         self.mode_button.pack()
 
         # Parameter widgets
-        self.user_entry = self.create_labeled_entry("User Name and Last Name")
+        self.user_entry = self.create_labeled_entry("User Full Name")
         self.vial_option = self.create_labeled_combobox("Vial", ["SCHOTT 6R", "SCHOTT 2R", "SCHOTT 20R"])
-        self.lyo_entry = self.create_labeled_entry("Lyo Name")
+        self.lyo_entry = self.create_labeled_combobox("Lyo Name", ["LyoStar", "REVO", "MicroFD"])
         self.formulation_option = self.create_labeled_combobox("Formulation", ["Sucrose 5%", "Mannitol 5%", "Sucrose 10%"])
         self.cin_checkbutton = self.create_labeled_checkbutton("CIN")
         self.annealing_checkbutton = self.create_labeled_checkbutton("Annealing")
@@ -111,10 +111,10 @@ class ParamsApp:
 
     def finish(self):
         self.params = {
-            'User Name and Last Name': self.user_entry.get(),
-            'Vial': self.vial_option.get(),
-            'Lyo Name': self.lyo_entry.get(),
-            'Formulation': self.formulation_option.get(),
+            'user': self.user_entry.get(),
+            'vial': self.vial_option.get(),
+            'lyophilizer': self.lyo_entry.get(),
+            'formulation': self.formulation_option.get(),
             'CIN': "Yes" if self.cin_checkbutton.get() else "No",
             'Annealing': "Yes" if self.annealing_checkbutton.get() else "No",
             'Is RF/MW Run?': "Yes" if self.is_rf_mw_run.get() == 1 else "No",
@@ -143,10 +143,19 @@ class ParamsApp:
         self.root.quit()
 
     def write_to_yaml(self, params):
+        user_initials = ''.join([w[0].capitalize() for w in self.params['user'].split(" ")])
+        if self.params["lyophilizer"] == "LyoStar":
+            lyo_abbrev = "LS"
+        elif self.params["lyophilizer"] == "REVO":
+            lyo_abbrev = "REVO"
+        elif self.params["lyophilizer"] == "MicroFD":
+            lyo_abbrev = "MFD"
+        else:
+            raise ValueError("Invalid lyophilizer name given.")
         now = datetime.now()
-        datetime_str = now.strftime("%m-%d-%Y_%H-%M")
-        filename = f"{self.user_entry.get().replace(' ', '_')}_{datetime_str}.yaml"
-        with open(filename, 'w') as f:
+        date = now.strftime("%Y-%m-%d")
+        fname = f"{date}_{lyo_abbrev}_{user_initials}.yaml"
+        with open(fname, 'w') as f:
             yaml.dump(params, f)
 
     def search(self):
