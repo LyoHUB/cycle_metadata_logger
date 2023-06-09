@@ -1,9 +1,12 @@
 import tkinter as tk
 from tkinter import messagebox, ttk
-import yaml
+# import yaml
+from ruamel.yaml import YAML
 import glob
 import os
 from datetime import datetime
+
+yaml = YAML(typ='rt')
 
 class ParamsApp:
     def __init__(self, root):
@@ -15,42 +18,45 @@ class ParamsApp:
         self.root.title("Enter Parameters")
         self.root.geometry("600x600")
 
+        self.style = ttk.Style()
+        self.style.configure("Basic", background="#FAFAFA", font=("Helvetica", 12))
         # Set font
-        self.font = ("Helvetica", 12)
+        # self.font = ("Helvetica", 12)
         
         # Set background color
-        self.bg_color = "#FAFAFA"
-        self.root.configure(bg=self.bg_color)
+        # self.bg_color = "#FAFAFA"
+        # self.root.configure(bg=self.bg_color)
 
         # Create GUI elements
         self.create_gui_elements()
 
     def create_gui_elements(self):
-        self.mode_button = tk.Button(self.root, text="Switch to Search Mode", command=self.toggle_mode, font=self.font, bg=self.bg_color)
+        self.mode_button = ttk.Button(self.root, text="Switch to Search Mode", command=self.toggle_mode)
         self.mode_button.pack()
 
         # Parameter widgets
         self.user_entry = self.create_labeled_entry("User Full Name")
-        self.vial_option = self.create_labeled_combobox("Vial", ["SCHOTT 6R", "SCHOTT 2R", "SCHOTT 20R"])
+        self.vial_option = self.create_labeled_combobox("Vial Type", ["SCHOTT 6R", "SCHOTT 2R", "SCHOTT 20R"])
+        self.vial_count = self.create_labeled_entry("Number of Vials")
         self.lyo_entry = self.create_labeled_combobox("Lyo Name", ["LyoStar", "REVO", "MicroFD"])
         self.formulation_option = self.create_labeled_combobox("Formulation", ["Sucrose 5%", "Mannitol 5%", "Sucrose 10%"])
         self.cin_checkbutton = self.create_labeled_checkbutton("CIN")
         self.annealing_checkbutton = self.create_labeled_checkbutton("Annealing")
 
         # RF/MW Run? options
-        self.is_rf_mw_run = tk.IntVar()
-        label = tk.Label(self.root, text="Is it RF/MW Run?", bg=self.bg_color, font=self.font)
+        self.is_rf_mw_run = tk.BooleanVar()
+        label = ttk.Label(self.root, text="RF/MW Run?", )
         label.pack()
-        yes_option = tk.Radiobutton(self.root, text="Yes", variable=self.is_rf_mw_run, value=1, command=self.toggle_rf_mw_entries, bg=self.bg_color, font=self.font)
-        no_option = tk.Radiobutton(self.root, text="No", variable=self.is_rf_mw_run, value=0, command=self.toggle_rf_mw_entries, bg=self.bg_color, font=self.font)
+        yes_option = ttk.Radiobutton(self.root, text="Yes", variable=self.is_rf_mw_run, value=True, command=self.toggle_rf_mw_entries, )
+        no_option = ttk.Radiobutton(self.root, text="No", variable=self.is_rf_mw_run, value=False, command=self.toggle_rf_mw_entries)
         yes_option.pack()
         no_option.pack()
 
         # RF/MW fields
         self.rfmw_labels = ['Power', 'Frequency']
         for label_text in self.rfmw_labels:
-            label = tk.Label(self.root, text=label_text, bg=self.bg_color, font=self.font)
-            entry = tk.Entry(self.root, state='disabled', font=self.font)
+            label = ttk.Label(self.root, text=label_text, )
+            entry = ttk.Entry(self.root, state='disabled', )
             self.rfmw_entries.append(entry)
 
             label.pack()
@@ -60,12 +66,15 @@ class ParamsApp:
         self.closed_loop_checkbutton = self.create_labeled_checkbutton("Closed-Loop")
 
         self.comments_entry = self.create_labeled_entry("Comments")
+        # ttk.Label(self.root, text="Comments").pack()
+        # self.comments_entry = tk.Text(self.root, height=2, width=15)
+        # self.comments_entry.pack()
 
-        self.finish_button = tk.Button(self.root, text="FINISH", command=self.finish, font=self.font, bg=self.bg_color)
+        self.finish_button = ttk.Button(self.root, text="FINISH", command=self.finish)
         self.finish_button.pack()
 
         # Search results
-        self.results_text = tk.Text(self.root, font=self.font)
+        self.results_text = tk.Text(self.root)
         self.results_text.pack()
         self.results_text.config(state='disabled')
 
@@ -89,14 +98,14 @@ class ParamsApp:
 
    
     def create_labeled_entry(self, text):
-        label = tk.Label(self.root, text=text)
+        label = ttk.Label(self.root, text=text)
         label.pack()
-        entry = tk.Entry(self.root)
+        entry = ttk.Entry(self.root)
         entry.pack()
         return entry
 
     def create_labeled_combobox(self, text, options):
-        label = tk.Label(self.root, text=text)
+        label = ttk.Label(self.root, text=text)
         label.pack()
         combo_box = ttk.Combobox(self.root, values=options)
         combo_box.set(options[0])  # default value
@@ -104,30 +113,36 @@ class ParamsApp:
         return combo_box
 
     def create_labeled_checkbutton(self, text):
-        var = tk.BooleanVar()
-        checkbutton = tk.Checkbutton(self.root, text=text, variable=var)
+        var = tk.BooleanVar(value=False)
+        checkbutton = ttk.Checkbutton(self.root, text=text, variable=var, )
         checkbutton.pack()
         return var
 
     def read_state(self): 
         params = {
             'user': self.user_entry.get(),
-            'vial': self.vial_option.get(),
             'lyophilizer': self.lyo_entry.get(),
             'formulation': self.formulation_option.get(),
             'CIN': self.cin_checkbutton.get(),
-            'Annealing': self.annealing_checkbutton.get(),
-            'Is RF/MW Run?': self.is_rf_mw_run.get(),
+            'annealing': self.annealing_checkbutton.get(),
+            'RF': self.is_rf_mw_run.get(),
         }
         
+        params['vials'] = {}
+        params['vials']['size'] = self.vial_option.get()
+        params['vials']['count'] = int(self.vial_count.get())
         if self.is_rf_mw_run.get():
-            rfmw_params = {self.rfmw_labels[i]: entry.get() for i, entry in enumerate(self.rfmw_entries)}
+            # rfmw_params = {self.rfmw_labels[i]: entry.get() for i, entry in enumerate(self.rfmw_entries)}
+            params["RF"] = {}
+            for name, entry in zip(self.rfmw_labels, self.rfmw_entries):
+                params["RF"][name.lower()] = float(entry.get())
         else:
-            rfmw_params = {label: 'N/A' for label in self.rfmw_labels}
+            params["RF"] = False
 
-        params.update(rfmw_params)
-        params['Closed-Loop'] = self.closed_loop_checkbutton.get()
-        params['Comments'] = self.comments_entry.get()
+        # params.update(rfmw_params)
+        params['closed loop'] = self.closed_loop_checkbutton.get()
+        params['comments'] = self.comments_entry.get()
+
         return params
 
     def finish(self):
@@ -138,8 +153,8 @@ class ParamsApp:
             return
 
         now = datetime.now()
-        datetime_str = now.strftime("%m/%d/%Y %H:%M")
-        self.params['DateTime'] = datetime_str
+        datetime_str = now.strftime("%Y-%m-%d %H:%M")
+        self.params['timestamp'] = datetime_str
 
         fname = self.write_to_yaml(self.params)
 
@@ -147,6 +162,15 @@ class ParamsApp:
         self.root.quit()
 
     def write_to_yaml(self, params):
+        with open("./metadata_template.yaml") as f:
+            template_params = yaml.load(f)
+
+        if not set(template_params.keys()).issubset(self.params):
+            raise ValueError("Not all fields in template are being written.")
+
+        for key in self.params.keys():
+            template_params[key] = self.params[key]
+
         user_initials = ''.join([w[0].capitalize() for w in self.params['user'].split(" ")])
         if self.params["lyophilizer"] == "LyoStar":
             lyo_abbrev = "LS"
@@ -160,7 +184,8 @@ class ParamsApp:
         date = now.strftime("%Y-%m-%d")
         fname = f"{date}_{lyo_abbrev}_{user_initials}.yaml"
         with open(fname, 'w') as f:
-            yaml.dump(params, f)
+            yaml.dump(template_params, f)
+
         return fname
 
     def search(self):

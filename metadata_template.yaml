@@ -12,14 +12,15 @@ formulation:
 - comp : mAB
   conc : 0.01
 # Controlled ice nucleation
-cin: false
+CIN: false
 # Annealing after freezing
 annealing: false
 # Include RF heating details, as necessary.
-rf:
+RF:
   power: 50 # Nominal power in watts
   frequency: 8   # Frequency in GHz
 closed loop: false
+# freezethaw:
 comments:
   This is just a demonstration of what we can do in YAML.
   Multiline things work just fine.
