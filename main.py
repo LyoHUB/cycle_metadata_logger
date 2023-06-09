@@ -115,18 +115,18 @@ class ParamsApp:
             'vial': self.vial_option.get(),
             'lyophilizer': self.lyo_entry.get(),
             'formulation': self.formulation_option.get(),
-            'CIN': "Yes" if self.cin_checkbutton.get() else "No",
-            'Annealing': "Yes" if self.annealing_checkbutton.get() else "No",
-            'Is RF/MW Run?': "Yes" if self.is_rf_mw_run.get() == 1 else "No",
+            'CIN': self.cin_checkbutton.get(),
+            'Annealing': self.annealing_checkbutton.get(),
+            'Is RF/MW Run?': self.is_rf_mw_run.get(),
         }
         
-        if self.is_rf_mw_run.get() == 1:
+        if self.is_rf_mw_run.get():
             rfmw_params = {self.rfmw_labels[i]: entry.get() for i, entry in enumerate(self.rfmw_entries)}
         else:
             rfmw_params = {label: 'N/A' for label in self.rfmw_labels}
 
         params.update(rfmw_params)
-        params['Closed-Loop'] = "Yes" if self.closed_loop_checkbutton.get() else "No"
+        params['Closed-Loop'] = self.closed_loop_checkbutton.get()
         params['Comments'] = self.comments_entry.get()
 
     def finish(self):
@@ -184,6 +184,7 @@ class ParamsApp:
         for filename in glob.glob('*.yaml'):
             with open(filename, 'r') as f:
                 params = yaml.safe_load(f)
+                # TODO: handle nested parameters more carefully
                 if all(params.get(key) == value for key, value in search_params.items() if value != ""):
                     self.results_text.insert(tk.END, f"{filename}\n")
         self.results_text.config(state='disabled')
