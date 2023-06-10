@@ -32,7 +32,7 @@ class ParamsApp:
         # Parameter widgets
         self.user_entry = self.create_labeled_entry("User Full Name")
         self.vial_option = self.create_labeled_combobox("Vial", ["SCHOTT 6R", "SCHOTT 2R", "SCHOTT 20R"])
-        self.lyo_entry = self.create_labeled_combobox("Lyo Name", ["LyoStar", "REVO", "MicroFD"])
+        self.lyo_entry = self.create_labeled_combobox("Lyophilizer Name", ["LyoStar3", "REVO", "MicroFD"])
         self.formulation_option = self.create_labeled_combobox("Formulation", ["Sucrose 5%", "Mannitol 5%", "Sucrose 10%"])
         self.cin_checkbutton = self.create_labeled_checkbutton("CIN")
         self.annealing_checkbutton = self.create_labeled_checkbutton("Annealing")
