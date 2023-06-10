@@ -38,7 +38,7 @@ class ParamsApp:
         self.user_entry = self.create_labeled_entry("User Full Name")
         self.vial_option = self.create_labeled_combobox("Vial Type", ["SCHOTT 6R", "SCHOTT 2R", "SCHOTT 20R"])
         self.vial_count = self.create_labeled_entry("Number of Vials")
-        self.lyo_entry = self.create_labeled_combobox("Lyo Name", ["LyoStar", "REVO", "MicroFD"])
+        self.lyo_entry = self.create_labeled_combobox("Lyophilizer Name", ["LyoStar3", "REVO", "MicroFD"])
         self.formulation_option = self.create_labeled_combobox("Formulation", ["Sucrose 5%", "Mannitol 5%", "Sucrose 10%"])
         self.cin_checkbutton = self.create_labeled_checkbutton("CIN")
         self.annealing_checkbutton = self.create_labeled_checkbutton("Annealing")
