@@ -2,9 +2,13 @@ import tkinter as tk
 from tkinter import messagebox, ttk
 # import yaml
 from ruamel.yaml import YAML
+# import yaml
+from ruamel.yaml import YAML
 import glob
 import os
 from datetime import datetime
+
+yaml = YAML(typ='rt')
 
 yaml = YAML(typ='rt')
 
