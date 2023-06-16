@@ -20,23 +20,12 @@ jobs:
         path: . 
         spec: metadata_writer.spec
 
-    - uses: actions/upload-artifact@v2
+    # - uses: actions/upload-artifact@v2
+    #   with:
+    #     name: metadata_writer.exe
+    #     path: dist/
+
+    - name: Release
+      uses: softprops/action-gh-release@v1
       with:
-        name: metadata_writer.exe
-        path: dist/
-
-  tagged-release:
-    name: "Tagged Release"
-    runs-on: "ubuntu-latest"
-
-    steps:
-      # ...
-      - name: "Build & test"
-        run: |
-          echo "done!"
-
-      - uses: "marvinpinto/action-automatic-releases@latest"
-        with:
-          files: |
-            LICENSE.txt
-            *.exe
+        files: dist/metadata_writer.exe
