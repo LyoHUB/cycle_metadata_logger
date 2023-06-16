@@ -2,7 +2,7 @@ name: Package Application with Pyinstaller
 
 on:
   release:
-    released:
+    types: [published]
   # push:
   #   branches: [ main ]
   # pull_request:
@@ -27,8 +27,17 @@ jobs:
     #     name: metadata_writer.exe
     #     path: dist/
 
-    - name: Release
-      uses: softprops/action-gh-release@v1
-      if: startsWith(github.ref, 'refs/tags/')
+    # - name: Release
+    #   uses: softprops/action-gh-release@v1
+    #   if: startsWith(github.ref, 'refs/tags/')
+    #   with:
+    #     files: "*.exe"
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@v2
       with:
-        files: "*.exe"
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: dist/metadata_writer.exe
+        asset_name: executable
+        tag: ${{ github.ref }}
+        overwrite: true
+        body: "This is my release text"
