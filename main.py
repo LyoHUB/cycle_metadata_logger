@@ -181,7 +181,7 @@ class ParamsApp:
         else:
             raise ValueError("Invalid lyophilizer name given.")
         now = datetime.now()
-        date = now.strftime("%Y-%m-%d")
+        date = now.strftime("%Y-%m-%d-%H")
         fname = f"{date}_{lyo_abbrev}_{user_initials}.yaml"
         with open(fname, 'w') as f:
             yaml.dump(template_params, f)
