@@ -22,3 +22,4 @@ Breakdown:
 
 - Have the script copy/rename process data files, so that .csv file with process data and .yaml file with metadata have the same name.
 - Include a search capability to identify historical runs with particular sets of metadata
+- Make separate text boxes for each formulation component & concentration, as shown in `metadata_template.yaml`
