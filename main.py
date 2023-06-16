@@ -6,6 +6,7 @@ from ruamel.yaml import YAML
 from ruamel.yaml import YAML
 import glob
 import os
+import sys
 from datetime import datetime
 
 yaml = YAML(typ='rt')
@@ -187,7 +188,8 @@ class ParamsApp:
         now = datetime.now()
         date = now.strftime("%Y-%m-%d-%H")
         fname = f"{date}_{lyo_abbrev}_{user_initials}.yaml"
-        with open(fname, 'w') as f:
+        folder_name = sys.path[0] + r"\\..\\AllLyoData\\"
+        with open(folder_name + fname, 'w') as f:
             yaml.dump(template_params, f)
 
         return fname
