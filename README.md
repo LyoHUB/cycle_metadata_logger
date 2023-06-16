@@ -18,6 +18,14 @@ Breakdown:
 - `LYO` will be `LS`, `MFD`, or `REVO`, indicating which machine
 - `UU` will be user initials
 
+## How to improve this system:
+
+1. Make changes and upload to the repo on GitHub
+1. Once changes are working, add a Release on GitHub (create a tag for the new version, while you're at it)
+1. Give GitHub Actions a minute or two to run
+1. Look at the release to find the executable
+1. Download the executable and place in `Z:\\data\cycle_metadata_logger\dist`
+
 ## Improvements to be made:
 
 - Have the script copy/rename process data files, so that .csv file with process data and .yaml file with metadata have the same name.
