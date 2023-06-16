@@ -31,8 +31,8 @@ class ParamsApp:
         self.create_gui_elements()
 
     def create_gui_elements(self):
-        self.mode_button = ttk.Button(self.root, text="Switch to Search Mode", command=self.toggle_mode)
-        self.mode_button.pack()
+        # self.mode_button = ttk.Button(self.root, text="Switch to Search Mode", command=self.toggle_mode)
+        # self.mode_button.pack()
 
         # Parameter widgets
         self.user_entry = self.create_labeled_entry("User Full Name")
@@ -74,19 +74,19 @@ class ParamsApp:
         self.finish_button.pack()
 
         # Search results
-        self.results_text = tk.Text(self.root)
-        self.results_text.pack()
-        self.results_text.config(state='disabled')
+        # self.results_text = tk.Text(self.root)
+        # self.results_text.pack()
+        # self.results_text.config(state='disabled')
 
-    def toggle_mode(self):
-        if self.mode == "write":
-            self.mode = "search"
-            self.mode_button.config(text="Switch to Write Mode")
-            self.finish_button.config(text="SEARCH", command=self.search)
-        else:
-            self.mode = "write"
-            self.mode_button.config(text="Switch to Search Mode")
-            self.finish_button.config(text="FINISH", command=self.finish)
+    # def toggle_mode(self):
+    #     if self.mode == "write":
+    #         self.mode = "search"
+    #         self.mode_button.config(text="Switch to Write Mode")
+    #         self.finish_button.config(text="SEARCH", command=self.search)
+    #     else:
+    #         self.mode = "write"
+    #         self.mode_button.config(text="Switch to Search Mode")
+    #         self.finish_button.config(text="FINISH", command=self.finish)
 
     def toggle_rf_mw_entries(self):
         if self.is_rf_mw_run.get() == 1:
@@ -187,33 +187,6 @@ class ParamsApp:
             yaml.dump(template_params, f)
 
         return fname
-
-    def search(self):
-        # search_params = {  # Note: Assumes all fields are optional for search
-        #     'Vial': self.vial_option.get(),
-        #     'Lyo Name': self.lyo_entry.get(),
-        #     'Formulation': self.formulation_option.get(),
-        #     'CIN': "Yes" if self.cin_checkbutton.get() else "No",
-        #     'Annealing': "Yes" if self.annealing_checkbutton.get() else "No",
-        #     'Is RF/MW Run?': "Yes" if self.is_rf_mw_run.get() == 1 else "No",
-        # }
-        # if self.is_rf_mw_run.get() == 1:
-        #     self.rfmw_params = {self.rfmw_labels[i]: entry.get() for i, entry in enumerate(self.rfmw_entries)}
-        # else:
-        #     self.rfmw_params = {label: 'N/A' for label in self.rfmw_labels}
-        # search_params.update(self.rfmw_params)
-        # search_params['Closed-Loop'] = "Yes" if self.closed_loop_checkbutton.get() else "No"
-        search_params = self.read_state()
-
-        self.results_text.config(state='normal')
-        self.results_text.delete('1.0', tk.END)
-        for filename in glob.glob('*.yaml'):
-            with open(filename, 'r') as f:
-                params = yaml.safe_load(f)
-                # TODO: handle nested parameters more carefully
-                if all(params.get(key) == value for key, value in search_params.items() if value != ""):
-                    self.results_text.insert(tk.END, f"{filename}\n")
-        self.results_text.config(state='disabled')
 
 root = tk.Tk()
 app = ParamsApp(root)
