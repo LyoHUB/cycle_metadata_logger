@@ -10,8 +10,12 @@ import sys
 from datetime import datetime
 
 yaml = YAML(typ='rt')
-
-yaml = YAML(typ='rt')
+if getattr(sys, 'frozen', False):
+    # Running as executable
+    basedir = os.path.join(os.path.dirname(sys.executable), "..")
+elif __file__:
+    # Running as Python file
+    basedir = os.path.dirname(__file__)
 
 class ParamsApp:
     def __init__(self, root):
@@ -167,7 +171,7 @@ class ParamsApp:
         self.root.quit()
 
     def write_to_yaml(self, params):
-        with open("./metadata_template.yaml") as f:
+        with open(os.path.join(basedir, "metadata_template.yaml")) as f:
             template_params = yaml.load(f)
 
         if not set(template_params.keys()).issubset(self.params):
@@ -188,8 +192,9 @@ class ParamsApp:
         now = datetime.now()
         date = now.strftime("%Y-%m-%d-%H")
         fname = f"{date}_{lyo_abbrev}_{user_initials}.yaml"
-        folder_name = sys.path[0] + r"\\..\\AllLyoData\\"
-        with open(folder_name + fname, 'w') as f:
+        # folder_name = os.path.join(sys.path[0] , "..", "AllLyoData")
+        folder_name = os.path.join(basedir, "..", "AllLyoData")
+        with open(os.path.join(folder_name, fname), 'w') as f:
             yaml.dump(template_params, f)
 
         return fname

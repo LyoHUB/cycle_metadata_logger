@@ -1,2 +1,4 @@
 # Exclude YAML files from GitHub sync
 *.yaml
+build
+dist
