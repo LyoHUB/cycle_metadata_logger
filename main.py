@@ -172,7 +172,7 @@ class ParamsApp:
             template_params[key] = self.params[key]
 
         user_initials = ''.join([w[0].capitalize() for w in self.params['user'].split(" ")])
-        if self.params["lyophilizer"] == "LyoStar":
+        if self.params["lyophilizer"] == "LyoStar3":
             lyo_abbrev = "LS"
         elif self.params["lyophilizer"] == "REVO":
             lyo_abbrev = "REVO"
