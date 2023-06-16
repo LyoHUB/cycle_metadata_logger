@@ -26,6 +26,9 @@ Breakdown:
 1. Look at the release to find the executable
 1. Download the executable and place in `Z:\\data\cycle_metadata_logger\dist`
 
+(except that this doesn't work because the lab computers have Windows 7 and are missing a .dll file)
+(so maybe a batch file on each computer, which points the local Python installation to this `main.py` file, would be a better way to go)
+
 ## Improvements to be made:
 
 - Have the script copy/rename process data files, so that .csv file with process data and .yaml file with metadata have the same name.
