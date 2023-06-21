@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import messagebox, ttk
+from tkinter import messagebox, ttk, filedialog
 # import yaml
 from ruamel.yaml import YAML
 # import yaml
@@ -7,6 +7,7 @@ from ruamel.yaml import YAML
 import glob
 import os
 import sys
+import shutil
 from datetime import datetime
 
 yaml = YAML(typ='rt')
@@ -31,7 +32,13 @@ class ParamsApp:
         self.style.configure("Basic", background="#FAFAFA", font=("Helvetica", 12))
         # Set font
         # self.font = ("Helvetica", 12)
+        self.folder_name = os.path.join(basedir, "..", "AllLyoData")
         
+        self.container_defaults = ["SCHOTT 2R",
+                                   "SCHOTT 6R",
+                                   "SCHOTT 10R",
+                                   "SiO2 10mL",
+        ]
         # Set background color
         # self.bg_color = "#FAFAFA"
         # self.root.configure(bg=self.bg_color)
@@ -43,15 +50,23 @@ class ParamsApp:
         # self.mode_button = ttk.Button(self.root, text="Switch to Search Mode", command=self.toggle_mode)
         # self.mode_button.pack()
 
+        self.find_procdat_button = ttk.Button(self.root, text="Locate Raw Data Files", command=self.find_procdat)
+        self.find_procdat_button.pack()
+        ttk.Label(text="Filenames").pack()
+        self.procfilesvar = tk.StringVar()
+        self.procdat_entry = ttk.Entry(textvariable=self.procfilesvar, width=40)
+        self.procdat_entry.pack()
+
         # Parameter widgets
         self.user_entry = self.create_labeled_entry("User Full Name")
         self.lyo_entry = self.create_labeled_combobox("Lyo Name", ["LyoStar3", "REVO", "MicroFD"])
-        self.vial_option = self.create_labeled_combobox("Vial Type", ["SCHOTT 6R", "SCHOTT 2R", "SCHOTT 20R"])
-        self.vial_count = self.create_labeled_entry("Number of Vials")
+        self.cont_option = self.create_labeled_combobox("Container Type/Size", self.container_defaults)
+        self.cont_count = self.create_labeled_entry("Number of Containers/Vials")
         self.formulation_option = self.create_labeled_combobox("Formulation", ["Sucrose 5%", "Mannitol 5%", "Sucrose 10%"])
         self.cin_checkbutton = self.create_labeled_checkbutton("CIN")
         self.annealing_checkbutton = self.create_labeled_checkbutton("Annealing")
         self.freezethaw_checkbutton = self.create_labeled_checkbutton("Freeze-thaw")
+        self.project_option = self.create_labeled_combobox("Project", ["NIIMBL RF", "Strain Gauge"])
 
         # RF/MW Run? options
         self.is_rf_mw_run = tk.BooleanVar()
@@ -63,7 +78,7 @@ class ParamsApp:
         no_option.pack()
 
         # RF/MW fields
-        self.rfmw_labels = ['Power', 'Frequency']
+        self.rfmw_labels = ['Power (W)', 'Frequency (GHz)']
         for label_text in self.rfmw_labels:
             label = ttk.Label(self.root, text=label_text, )
             entry = ttk.Entry(self.root, state='disabled', )
@@ -106,6 +121,14 @@ class ParamsApp:
             for entry in self.rfmw_entries:
                 entry.config(state='disabled')
 
+    def find_procdat(self):
+        self.procfilenames = filedialog.askopenfilenames()
+        print("Filenames acquired:")
+        for n in self.procfilenames:
+            print(n)
+        self.procfilesvar.set(self.procfilenames)
+        print(type(self.procfilenames))
+
    
     def create_labeled_entry(self, text):
         label = ttk.Label(self.root, text=text)
@@ -135,24 +158,25 @@ class ParamsApp:
             'formulation': self.formulation_option.get(),
             'CIN': self.cin_checkbutton.get(),
             'annealing': self.annealing_checkbutton.get(),
-            'RF': self.is_rf_mw_run.get(),
+            'closed loop' : self.closed_loop_checkbutton.get(),
+            'freezethaw' : self.freezethaw_checkbutton.get(),
+            'original filenames' : self.procfilenames,
+            'comments' : self.comments_entry.get(),
+            'project' : self.project_option.get(),
         }
         
-        params['vials'] = {}
-        params['vials']['size'] = self.vial_option.get()
-        params['vials']['count'] = int(self.vial_count.get())
+        params['containers'] = {}
+        params['containers']['type'] = self.cont_option.get()
+        params['containers']['count'] = int(self.cont_count.get())
         if self.is_rf_mw_run.get():
             # rfmw_params = {self.rfmw_labels[i]: entry.get() for i, entry in enumerate(self.rfmw_entries)}
             params["RF"] = {}
             for name, entry in zip(self.rfmw_labels, self.rfmw_entries):
-                params["RF"][name.lower()] = float(entry.get())
+                params["RF"][name.lower().split(" ")[1]] = float(entry.get())
         else:
             params["RF"] = False
 
         # params.update(rfmw_params)
-        params['closed loop'] = self.closed_loop_checkbutton.get()
-        params['freezethaw'] = self.freezethaw_checkbutton.get()
-        params['comments'] = self.comments_entry.get()
 
         return params
 
@@ -167,16 +191,30 @@ class ParamsApp:
         datetime_str = now.strftime("%Y-%m-%d %H:%M")
         self.params['timestamp'] = datetime_str
 
-        fname = self.write_to_yaml(self.params)
+        fname_base, fname_yaml = self.write_to_yaml(self.params)
 
-        messagebox.showinfo("Success", f"Parameters saved to {fname}")
+        messagebox.showinfo("Partial Success", f"Parameters saved to {fname_yaml}")
+
+        if len(self.procfilenames) == 1: # If a single string, do once
+            name = self.procfilenames[0]
+            ext = os.path.splitext(name)[1]
+            shutil.copy(name, os.path.join(self.folder_name, fname_base + ext)) 
+            messagebox.showinfo("Complete Success", f"Process file copied to {fname_base}{ext}")
+        else:
+            for i, name in enumerate(self.procfilenames):
+                ext = os.path.splitext(name)[1]
+                shutil.copy(name, os.path.join(self.folder_name, fname_base + f"_{i+1}" + ext)) 
+            messagebox.showinfo("Complete Success", f"Process files copied to {fname_base}_#{ext}")
+
+
         self.root.quit()
 
     def write_to_yaml(self, params):
         with open(os.path.join(basedir, "metadata_template.yaml")) as f:
             template_params = yaml.load(f)
 
-        if not set(template_params.keys()).issubset(self.params):
+        if not set(template_params.keys()).issubset(self.params.keys()):
+            print(self.params.keys())
             raise ValueError("Not all fields in template are being written.")
 
         for key in self.params.keys():
@@ -193,13 +231,14 @@ class ParamsApp:
             raise ValueError(f"Invalid lyophilizer name given: {self.params['lyophilizer']}")
         now = datetime.now()
         date = now.strftime("%Y-%m-%d-%H")
-        fname = f"{date}_{lyo_abbrev}_{user_initials}.yaml"
+        fname_base = f"{date}_{lyo_abbrev}_{user_initials}"
+        fname = fname_base + ".yaml"
         # folder_name = os.path.join(sys.path[0] , "..", "AllLyoData")
-        folder_name = os.path.join(basedir, "..", "AllLyoData")
-        with open(os.path.join(folder_name, fname), 'w') as f:
+        # folder_name = os.path.join(basedir, "..", "AllLyoData")
+        with open(os.path.join(self.folder_name, fname), 'w') as f:
             yaml.dump(template_params, f)
 
-        return fname
+        return fname_base, fname
 
 root = tk.Tk()
 app = ParamsApp(root)
