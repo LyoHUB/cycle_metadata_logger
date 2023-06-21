@@ -123,11 +123,10 @@ class ParamsApp:
 
     def find_procdat(self):
         self.procfilenames = filedialog.askopenfilenames()
-        print("Filenames acquired:")
+        print(f"{len(self.procfilenames)} filename(s) acquired:")
         for n in self.procfilenames:
             print(n)
         self.procfilesvar.set(self.procfilenames)
-        print(type(self.procfilenames))
 
    
     def create_labeled_entry(self, text):
