@@ -51,6 +51,7 @@ class ParamsApp:
         self.formulation_option = self.create_labeled_combobox("Formulation", ["Sucrose 5%", "Mannitol 5%", "Sucrose 10%"])
         self.cin_checkbutton = self.create_labeled_checkbutton("CIN")
         self.annealing_checkbutton = self.create_labeled_checkbutton("Annealing")
+        self.freezethaw_checkbutton = self.create_labeled_checkbutton("Freeze-thaw")
 
         # RF/MW Run? options
         self.is_rf_mw_run = tk.BooleanVar()
@@ -150,6 +151,7 @@ class ParamsApp:
 
         # params.update(rfmw_params)
         params['closed loop'] = self.closed_loop_checkbutton.get()
+        params['freezethaw'] = self.freezethaw_checkbutton.get()
         params['comments'] = self.comments_entry.get()
 
         return params
