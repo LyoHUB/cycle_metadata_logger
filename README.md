@@ -3,7 +3,8 @@ Python & Tkinter GUI for recording metadata that goes alongside lyophilization r
 
 ## What you do:
 
-1. Execute `main.py`
+1. Find `Z:\data\metadata_writer.exe - Shortcut`
+1. Execute the shortcut
 1. Fill out all the run information
 1. Click "Finish"
 
@@ -20,14 +21,21 @@ Breakdown:
 
 ## How to improve this system:
 
-1. Make changes and upload to the repo on GitHub
-1. Once changes are working, add a Release on GitHub (create a tag for the new version, while you're at it)
+First, make changes and upload to this repo, then pull them down to the instance of this repo on `depot\lyohub\data\cycle_metadata_logger`.
+### Windows 7
+1. Log onto a computer with Windows 7 (any of the ones in the lab will do, but the desk one already has everything installed)
+1. Open PowerShell
+1. Navigate to the repo directory on the LyoHUB remote drive
+1. Run `pyinstaller metadata_writer.spec`
+
+That should be all the steps, but this needs validation.
+
+### Windows 10
+1. Add a Release on GitHub (create a tag for the new version, while you're at it)
 1. Give GitHub Actions a minute or two to run
 1. Look at the release to find the executable
-1. Download the executable and place in `Z:\\data\cycle_metadata_logger\dist`
+1. Download the executable and place where you want it
 
-(except that this doesn't work because the lab computers have Windows 7 and are missing a .dll file)
-(so maybe a batch file on each computer, which points the local Python installation to this `main.py` file, would be a better way to go)
 
 ## Improvements to be made:
 
