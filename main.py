@@ -212,22 +212,24 @@ class ParamsApp:
         with open(os.path.join(basedir, "metadata_template.yaml")) as f:
             template_params = yaml.load(f)
 
-        if not set(template_params.keys()).issubset(self.params.keys()):
-            print(self.params.keys())
-            raise ValueError("Not all fields in template are being written.")
+        if not set(template_params.keys()).issubset(params.keys()):
+            print(params.keys())
+            messagebox.showinfo("Error", "Not all fields in template are being written.\n(Software error: let Isaac know)")
+            # raise ValueError("Not all fields in template are being written.")
 
-        for key in self.params.keys():
-            template_params[key] = self.params[key]
+        for key in params.keys():
+            template_params[key] = params[key]
 
-        user_initials = ''.join([w[0].capitalize() for w in self.params['user'].split(" ")])
-        if self.params["lyophilizer"] == "LyoStar3":
+        user_initials = ''.join([w[0].capitalize() for w in params['user'].split(" ")])
+        if params["lyophilizer"] == "LyoStar3":
             lyo_abbrev = "LS"
-        elif self.params["lyophilizer"] == "REVO":
+        elif params["lyophilizer"] == "REVO":
             lyo_abbrev = "REVO"
-        elif self.params["lyophilizer"] == "MicroFD":
+        elif params["lyophilizer"] == "MicroFD":
             lyo_abbrev = "MFD"
         else:
-            raise ValueError(f"Invalid lyophilizer name given: {self.params['lyophilizer']}")
+            messagebox.showinfo("Error", f"Invalid lyophilizer name given: {params['lyophilizer']}")
+            # raise ValueError()
         now = datetime.now()
         date = now.strftime("%Y-%m-%d-%H")
         fname_base = f"{date}_{lyo_abbrev}_{user_initials}"
