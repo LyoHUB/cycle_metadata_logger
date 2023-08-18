@@ -42,5 +42,7 @@ First, make changes and upload to this repo, then pull them down to the instance
 - Include a search capability to identify historical runs with particular sets of metadata
 - Make separate text boxes for each formulation component & concentration, as shown in `metadata_template.yaml`
 
+- Error if no process fiel is included
+
 - Store history of user inputs to use in dropdown boxes?
     - Or: store longer list of default options in a separate text file, so that it's easy to add and modify
