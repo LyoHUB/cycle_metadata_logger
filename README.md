@@ -22,13 +22,13 @@ Breakdown:
 ## How to improve this system:
 
 First, make changes and upload to this repo, then pull them down to the instance of this repo on `depot\lyohub\data\cycle_metadata_logger`.
+
 ### Windows 7
 1. Log onto a computer with Windows 7 (any of the ones in the lab will do, but the desk one already has everything installed)
 1. Open PowerShell
 1. Navigate to the repo directory on the LyoHUB remote drive
 1. Run `pyinstaller metadata_writer.spec`
-
-That should be all the steps, but this needs validation.
+1. Find the executable in `depot\lyohub\data\cycle_metadata_logger\dist`, and check its file permissions: "everyone" should be able to "read and execute"
 
 ### Windows 10
 1. Add a Release on GitHub (create a tag for the new version, while you're at it)
