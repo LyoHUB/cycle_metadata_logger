@@ -42,6 +42,5 @@ That should be all the steps, but this needs validation.
 - Include a search capability to identify historical runs with particular sets of metadata
 - Make separate text boxes for each formulation component & concentration, as shown in `metadata_template.yaml`
 
-- Adjust the "fill every field" error box to allow empty comment box
 - Store history of user inputs to use in dropdown boxes?
     - Or: store longer list of default options in a separate text file, so that it's easy to add and modify

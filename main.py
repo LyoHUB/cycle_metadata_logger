@@ -160,7 +160,7 @@ class ParamsApp:
             'closed loop' : self.closed_loop_checkbutton.get(),
             'freezethaw' : self.freezethaw_checkbutton.get(),
             'original filenames' : self.procfilenames,
-            'comments' : self.comments_entry.get(),
+            'comments' : self.comments_entry.get() + " ",
             'project' : self.project_option.get(),
         }
         
@@ -182,6 +182,7 @@ class ParamsApp:
     def finish(self):
         self.params = self.read_state()
 
+        
         if "" in self.params.values():
             messagebox.showinfo("Error", "All fields must be filled out")
             return
