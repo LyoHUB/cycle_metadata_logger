@@ -39,10 +39,14 @@ First, make changes and upload to this repo, then pull them down to the instance
 
 ## Improvements to be made:
 
+- Make the date and time a field to fill out, rather than set by the time you run it
+- Add fill volume!
+- At least include total solid concentration, if not something fancier
+
 - Include a search capability to identify historical runs with particular sets of metadata
 - Make separate text boxes for each formulation component & concentration, as shown in `metadata_template.yaml`
 
-- Error if no process fiel is included
+- Error if no process field is included
 
 - Store history of user inputs to use in dropdown boxes?
     - Or: store longer list of default options in a separate text file, so that it's easy to add and modify

@@ -6,11 +6,9 @@ containers:
   type: SCHOTT 6R
   count: 100
 # List ingredients; concentration is g/mL, so 5% w/v written as 0.05
-formulation:
-- comp : mannitol
-  conc : 0.05
-- comp : mAB
-  conc : 0.01
+fill: 1.5 # Fill in mL
+concentration: .05 # Solids content, in w/v % (e.g. .05g/mL w
+formulation: 1:5 mAb:mannitol
 # Controlled ice nucleation
 CIN: false
 # Annealing after freezing
