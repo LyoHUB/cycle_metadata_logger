@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox, ttk, filedialog
-# import yaml
-from ruamel.yaml import YAML
+# from tkcalendar import DateEntry
 # import yaml
 from ruamel.yaml import YAML
 import glob
@@ -26,7 +25,7 @@ class ParamsApp:
         self.mode = "write"  # starts in 'write' mode
 
         self.root.title("Enter Parameters")
-        self.root.geometry("600x600")
+        # self.root.geometry("600x600")
 
         self.style = ttk.Style()
         self.style.configure("Basic", background="#FAFAFA", font=("Helvetica", 12))
@@ -52,7 +51,7 @@ class ParamsApp:
 
         self.find_procdat_button = ttk.Button(self.root, text="Locate Raw Data Files", command=self.find_procdat)
         self.find_procdat_button.pack()
-        ttk.Label(text="Filenames").pack()
+        ttk.Label(text="Filenames (plural--process and other)").pack()
         self.procfilesvar = tk.StringVar()
         self.procdat_entry = ttk.Entry(textvariable=self.procfilesvar, width=40)
         self.procdat_entry.pack()
@@ -63,6 +62,8 @@ class ParamsApp:
         self.cont_option = self.create_labeled_combobox("Container Type/Size", self.container_defaults)
         self.cont_count = self.create_labeled_entry("Number of Containers/Vials")
         self.formulation_option = self.create_labeled_combobox("Formulation", ["Sucrose 5%", "Mannitol 5%", "Sucrose 10%"])
+        self.concentration = self.create_labeled_entry("Total Solids Content (g/mL)")
+        self.fill = self.create_labeled_entry("Fill Volume (mL)")
         self.cin_checkbutton = self.create_labeled_checkbutton("CIN")
         self.annealing_checkbutton = self.create_labeled_checkbutton("Annealing")
         self.freezethaw_checkbutton = self.create_labeled_checkbutton("Freeze-thaw")
@@ -155,6 +156,8 @@ class ParamsApp:
             'user': self.user_entry.get(),
             'lyophilizer': self.lyo_entry.get(),
             'formulation': self.formulation_option.get(),
+            'concentration': float(self.concentration.get()),
+            'fill': float(self.fill.get()),
             'CIN': self.cin_checkbutton.get(),
             'annealing': self.annealing_checkbutton.get(),
             'closed loop' : self.closed_loop_checkbutton.get(),
@@ -237,6 +240,7 @@ class ParamsApp:
         fname = fname_base + ".yaml"
         # folder_name = os.path.join(sys.path[0] , "..", "AllLyoData")
         # folder_name = os.path.join(basedir, "..", "AllLyoData")
+        print(self.folder_name)
         with open(os.path.join(self.folder_name, fname), 'w') as f:
             yaml.dump(template_params, f)
 
