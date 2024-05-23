@@ -1,6 +1,6 @@
 import tkinter as tk
-from tkinter import messagebox, ttk, filedialog
-# from tkcalendar import DateEntry
+from tkinter import messagebox, ttk, filedialog, Frame
+from tkcalendar import DateEntry
 # import yaml
 from ruamel.yaml import YAML
 import glob
@@ -46,58 +46,69 @@ class ParamsApp:
         self.create_gui_elements()
 
     def create_gui_elements(self):
+
+        # Left frame -------------
+        left_frame = Frame(self.root)
+        left_frame.pack(side="left", fill="y", expand=True)
+        center_frame = Frame(self.root)
+        center_frame.pack(side="left", fill="y", expand=True)
+        right_frame = Frame(self.root)
+        right_frame.pack(side="left", fill="y", expand=True)
+        self.finish_button = ttk.Button(self.root, text="FINISH", command=self.finish)
+        self.finish_button.pack(side="right", fill="y", padx=10, pady=10)
+
+        self.find_procdat_button = ttk.Button(left_frame, text="Locate Raw Data Files", command=self.find_procdat)
+        self.find_procdat_button.pack()
+        ttk.Label(left_frame, text="Filenames (plural--process and other)").pack()
+        self.procfilesvar = tk.StringVar()
+        self.procdat_entry = ttk.Entry(left_frame, textvariable=self.procfilesvar, width=40)
+        self.procdat_entry.pack()
         # self.mode_button = ttk.Button(self.root, text="Switch to Search Mode", command=self.toggle_mode)
         # self.mode_button.pack()
+        self.cal = self.create_calendar_entry("Process start date", left_frame)
+        self.hour = self.create_labeled_combobox("Process start hour (0-23)", left_frame, [str(i) for i in range(24)])
 
-        self.find_procdat_button = ttk.Button(self.root, text="Locate Raw Data Files", command=self.find_procdat)
-        self.find_procdat_button.pack()
-        ttk.Label(text="Filenames (plural--process and other)").pack()
-        self.procfilesvar = tk.StringVar()
-        self.procdat_entry = ttk.Entry(textvariable=self.procfilesvar, width=40)
-        self.procdat_entry.pack()
 
         # Parameter widgets
-        self.user_entry = self.create_labeled_entry("User Full Name")
-        self.lyo_entry = self.create_labeled_combobox("Lyo Name", ["LyoStar3", "REVO", "MicroFD"])
-        self.cont_option = self.create_labeled_combobox("Container Type/Size", self.container_defaults)
-        self.cont_count = self.create_labeled_entry("Number of Containers/Vials")
-        self.formulation_option = self.create_labeled_combobox("Formulation", ["Sucrose 5%", "Mannitol 5%", "Sucrose 10%"])
-        self.concentration = self.create_labeled_entry("Total Solids Content (g/mL)")
-        self.fill = self.create_labeled_entry("Fill Volume (mL)")
-        self.cin_checkbutton = self.create_labeled_checkbutton("CIN")
-        self.annealing_checkbutton = self.create_labeled_checkbutton("Annealing")
-        self.freezethaw_checkbutton = self.create_labeled_checkbutton("Freeze-thaw")
-        self.project_option = self.create_labeled_combobox("Project", ["NIIMBL RF", "Strain Gauge"])
+        self.user_entry = self.create_labeled_entry("User Full Name", left_frame)
+        self.lyo_entry = self.create_labeled_combobox("Lyo Name", left_frame, ["LyoStar3", "REVO", "MicroFD"])
+        self.cont_option = self.create_labeled_combobox("Container Type/Size", center_frame, self.container_defaults)
+        self.cont_count = self.create_labeled_entry("Number of Containers/Vials", center_frame)
+        self.formulation_option = self.create_labeled_combobox("Formulation", center_frame, ["Sucrose 5%", "Mannitol 5%", "Sucrose 10%"])
+        self.concentration = self.create_labeled_entry("Total Solids Content (g/mL)", center_frame)
+        self.fill = self.create_labeled_entry("Fill Volume (mL)", center_frame)
+        self.cin_checkbutton = self.create_labeled_checkbutton("CIN", center_frame)
+        self.annealing_checkbutton = self.create_labeled_checkbutton("Annealing", center_frame)
+        self.freezethaw_checkbutton = self.create_labeled_checkbutton("Freeze-thaw", center_frame)
+        self.project_option = self.create_labeled_combobox("Project", right_frame, ["NIIMBL RF", "Strain Gauge"])
 
         # RF/MW Run? options
         self.is_rf_mw_run = tk.BooleanVar()
-        label = ttk.Label(self.root, text="RF/MW Run?", )
+        label = ttk.Label(right_frame, text="RF/MW Run?", )
         label.pack()
-        yes_option = ttk.Radiobutton(self.root, text="Yes", variable=self.is_rf_mw_run, value=True, command=self.toggle_rf_mw_entries, )
-        no_option = ttk.Radiobutton(self.root, text="No", variable=self.is_rf_mw_run, value=False, command=self.toggle_rf_mw_entries)
+        yes_option = ttk.Radiobutton(right_frame, text="Yes", variable=self.is_rf_mw_run, value=True, command=self.toggle_rf_mw_entries, )
+        no_option = ttk.Radiobutton(right_frame, text="No", variable=self.is_rf_mw_run, value=False, command=self.toggle_rf_mw_entries)
         yes_option.pack()
         no_option.pack()
 
         # RF/MW fields
         self.rfmw_labels = ['Power (W)', 'Frequency (GHz)']
         for label_text in self.rfmw_labels:
-            label = ttk.Label(self.root, text=label_text, )
-            entry = ttk.Entry(self.root, state='disabled', )
+            label = ttk.Label(right_frame, text=label_text, )
+            entry = ttk.Entry(right_frame, state='disabled', )
             self.rfmw_entries.append(entry)
 
             label.pack()
             entry.pack()
 
         # Separate Closed-Loop option
-        self.closed_loop_checkbutton = self.create_labeled_checkbutton("Closed-Loop")
+        self.closed_loop_checkbutton = self.create_labeled_checkbutton("Closed-Loop", right_frame)
 
-        self.comments_entry = self.create_labeled_entry("Comments")
+        self.comments_entry = self.create_labeled_entry("Comments", right_frame)
         # ttk.Label(self.root, text="Comments").pack()
         # self.comments_entry = tk.Text(self.root, height=2, width=15)
         # self.comments_entry.pack()
 
-        self.finish_button = ttk.Button(self.root, text="FINISH", command=self.finish)
-        self.finish_button.pack()
 
         # Search results
         # self.results_text = tk.Text(self.root)
@@ -130,29 +141,38 @@ class ParamsApp:
         self.procfilesvar.set(self.procfilenames)
 
    
-    def create_labeled_entry(self, text):
-        label = ttk.Label(self.root, text=text)
+    def create_calendar_entry(self, text, frame):
+        label = ttk.Label(frame, text=text)
         label.pack()
-        entry = ttk.Entry(self.root)
+        now = datetime.now()
+        cal = DateEntry(frame, year = now.year, month=now.month, day=now.day)
+        cal.pack()
+        return cal
+
+    def create_labeled_entry(self, text, frame):
+        label = ttk.Label(frame, text=text)
+        label.pack()
+        entry = ttk.Entry(frame)
         entry.pack()
         return entry
 
-    def create_labeled_combobox(self, text, options):
-        label = ttk.Label(self.root, text=text)
+    def create_labeled_combobox(self, text, frame, options):
+        label = ttk.Label(frame, text=text)
         label.pack()
-        combo_box = ttk.Combobox(self.root, values=options)
+        combo_box = ttk.Combobox(frame, values=options)
         combo_box.set(options[0])  # default value
         combo_box.pack()
         return combo_box
 
-    def create_labeled_checkbutton(self, text):
+    def create_labeled_checkbutton(self, text, frame,):
         var = tk.BooleanVar(value=False)
-        checkbutton = ttk.Checkbutton(self.root, text=text, variable=var, )
+        checkbutton = ttk.Checkbutton(frame, text=text, variable=var, )
         checkbutton.pack()
         return var
 
     def read_state(self): 
         params = {
+            'start date' : self.cal.get_date(),
             'user': self.user_entry.get(),
             'lyophilizer': self.lyo_entry.get(),
             'formulation': self.formulation_option.get(),
@@ -234,9 +254,11 @@ class ParamsApp:
         else:
             messagebox.showinfo("Error", f"Invalid lyophilizer name given: {params['lyophilizer']}")
             # raise ValueError()
-        now = datetime.now()
-        date = now.strftime("%Y-%m-%d-%H")
-        fname_base = f"{date}_{lyo_abbrev}_{user_initials}"
+        # now = datetime.now()
+        # date = now.strftime("%Y-%m-%d-%H")
+        date = self.cal.get_date().strftime("%Y-%m-%d")
+        hour = int(self.hour.get())
+        fname_base = f"{date}-{hour:02d}_{lyo_abbrev}_{user_initials}"
         fname = fname_base + ".yaml"
         # folder_name = os.path.join(sys.path[0] , "..", "AllLyoData")
         # folder_name = os.path.join(basedir, "..", "AllLyoData")

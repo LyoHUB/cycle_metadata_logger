@@ -1,6 +1,7 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 block_cipher = None
+hiddenimports=["babel.numbers"]
 
 
 a = Analysis(['main.py'],
