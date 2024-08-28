@@ -1,5 +1,6 @@
 # cycle_metadata_logger
 Python & Tkinter GUI for recording metadata that goes alongside lyophilization runs.
+Authored by Petr Kazarin and ChatGPT initially; expanded and improved by Isaac S Wheeler.
 
 ## What you do:
 
@@ -23,12 +24,12 @@ Breakdown:
 
 First, make changes and upload to this repo, then pull them down to the instance of this repo on `depot\lyohub\data\cycle_metadata_logger`.
 
-### Windows 7
-1. Log onto a computer with Windows 7 (any of the ones in the lab will do, but the desk one already has everything installed)
+### Windows 7 install
+1. Log onto a computer with Windows 7 (any of the ones in the lab could be used, but the FDM computer already has everything necessary installed)
 1. Open PowerShell
-1. Navigate to the repo directory on the LyoHUB remote drive
+1. Navigate to the repo directory on the LyoHUB remote drive using `cd` command
 1. Run `pyinstaller metadata_writer.spec`
-1. Find the executable in `depot\lyohub\data\cycle_metadata_logger\dist`, and check its file permissions: "everyone" should be able to "read and execute"
+1. Find the executable in `depot\lyohub\data\cycle_metadata_logger\dist`, and check its file permissions: "everyone" should be able to "read and execute" (this is not the default)
 
 ### Windows 10
 1. Add a Release on GitHub (create a tag for the new version, while you're at it)
@@ -39,11 +40,9 @@ First, make changes and upload to this repo, then pull them down to the instance
 
 ## Improvements to be made:
 
-- Make the date and time a field to fill out, rather than set by the time you run it
-
 - Include a search capability to identify historical runs with particular sets of metadata
 
 - Error if no process field is included
 
-- Store history of user inputs to use in dropdown boxes?
+- Store history of user inputs to use in dropdown boxes (e.g. vial size, formulation, project)?
     - Or: store longer list of default options in a separate text file, so that it's easy to add and modify
