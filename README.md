@@ -27,10 +27,10 @@ First, make changes and upload to this repo, then pull them down to the instance
 ### Windows 7 install
 1. Log onto a computer with Windows 7 (any of the ones in the lab could be used, but the FDM computer already has everything necessary installed)
 1. Open PowerShell
-1. Navigate to the repo directory on the LyoHUB remote drive
-1. Update the repo to match GitHub, e.g. with `git pull`
-1. Run `pyinstaller metadata_writer.spec`
-1. Find the executable in `depot\lyohub\data\cycle_metadata_logger\dist`, and check its file permissions: "everyone" should be able to "read and execute" (this is not the default)
+1. In PowerShell: Navigate to the repo directory on the LyoHUB remote drive
+1. In PowerShell: Update the repo to match GitHub, e.g. with `git pull`
+1. In PowerShell: Run `pyinstaller metadata_writer.spec`
+1. In a regular file explorer window, find the executable in `depot\lyohub\data\cycle_metadata_logger\dist`, and check its file permissions: "everyone" should be able to "read and execute" (this is not the default)
 
 ### Windows 10
 1. Add a Release on GitHub (create a tag for the new version, while you're at it)
