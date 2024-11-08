@@ -16,7 +16,7 @@ YAML file names are as follows:
 `YYYY-MM-DD-HH_LYO_UU.yaml`
 Breakdown:
 - `YYYY-MM-DD-HH` is a timestamp, including hours in case multiple are run in a day
-- `LYO` will be `LS`, `MFD`, or `REVO`, indicating which machine
+- `LYO` will be `LS`, `LC`, `MFD`, or `REVO`, indicating which machine
 - `UU` will be user initials
 
 ## How to improve this system:
@@ -27,6 +27,7 @@ First, make changes and upload to this repo, then pull them down to the instance
 1. Log onto a computer with Windows 7 (any of the ones in the lab will do, but the desk one already has everything installed)
 1. Open PowerShell
 1. Navigate to the repo directory on the LyoHUB remote drive
+1. Update the repo to match GitHub, e.g. with `git pull`
 1. Run `pyinstaller metadata_writer.spec`
 1. Find the executable in `depot\lyohub\data\cycle_metadata_logger\dist`, and check its file permissions: "everyone" should be able to "read and execute"
 

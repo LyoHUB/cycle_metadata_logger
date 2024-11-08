@@ -1,5 +1,5 @@
 user: Isaac Wheeler
-# Lyophilizer: either LyoStar, REVO, or MicroFD
+# Lyophilizer: LyoStar, REVO, MicroFD, or LabConco
 lyophilizer: LyoStar
 # Vial size and count in the run
 containers:

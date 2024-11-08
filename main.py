@@ -71,7 +71,7 @@ class ParamsApp:
 
         # Parameter widgets
         self.user_entry = self.create_labeled_entry("User Full Name", left_frame)
-        self.lyo_entry = self.create_labeled_combobox("Lyo Name", left_frame, ["LyoStar3", "REVO", "MicroFD"])
+        self.lyo_entry = self.create_labeled_combobox("Lyo Name", left_frame, ["LyoStar3", "REVO", "MicroFD", "LabConco"])
         self.cont_option = self.create_labeled_combobox("Container Type/Size", center_frame, self.container_defaults)
         self.cont_count = self.create_labeled_entry("Number of Containers/Vials", center_frame)
         self.formulation_option = self.create_labeled_combobox("Formulation", center_frame, ["Sucrose 5%", "Mannitol 5%", "Sucrose 10%"])
@@ -251,6 +251,8 @@ class ParamsApp:
             lyo_abbrev = "REVO"
         elif params["lyophilizer"] == "MicroFD":
             lyo_abbrev = "MFD"
+        elif params["lyophilizer"] == "LabConco":
+            lyo_abbrev = "LC"
         else:
             messagebox.showinfo("Error", f"Invalid lyophilizer name given: {params['lyophilizer']}")
             # raise ValueError()
