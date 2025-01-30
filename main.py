@@ -31,19 +31,39 @@ class ParamsApp:
         self.style.configure("Basic", background="#FAFAFA", font=("Helvetica", 12))
         # Set font
         # self.font = ("Helvetica", 12)
-        self.folder_name = os.path.join(basedir, "..", "AllLyoData")
         
-        self.container_defaults = ["SCHOTT 2R",
-                                   "SCHOTT 6R",
-                                   "SCHOTT 10R",
-                                   "SiO2 10mL",
-        ]
+        # Get some default settings
+        self.get_defaults()
+
         # Set background color
         # self.bg_color = "#FAFAFA"
         # self.root.configure(bg=self.bg_color)
-
         # Create GUI elements
         self.create_gui_elements()
+
+    def get_defaults(self):
+        try:
+            with open(os.path.join(basedir, "persistent_options.yaml")) as f:
+                options = yaml.load(f)
+        except:
+
+            messagebox.showinfo("Minor error", "No YAML found for persistent options. Defaulting to hard-coded ones.")
+            options = {"container_defaults": ["SCHOTT 2R", "SCHOTT 6R", "SCHOTT 10R", "SiO2 10mL"],
+                        "lyophilizer_defaults": ["LyoStar3", "REVO", "MicroFD", "LabConco"],
+                        "formulation_defaults": ["Sucrose 5%", "Mannitol 5%", "Sucrose 10%"],
+                        "project_defaults": ["RF", "Strain Gauge"],
+                        "dest_folder": os.path.join(basedir, "..", "AllLyoData"),
+            }
+            
+        self.container_defaults = options["container_defaults"]
+        self.lyo_defaults = options["lyophilizer_defaults"]
+        self.formulation_defaults = options["formulation_defaults"]
+        self.dest_folder = options["dest_folder"]
+        if self.dest_folder[1] == ".":
+            self.dest_folder = os.path.join(basedir, options["dest_folder"])
+
+        self.dest_folder_var = tk.StringVar()
+        self.dest_folder_var.set(self.dest_folder)
 
     def create_gui_elements(self):
 
@@ -63,18 +83,21 @@ class ParamsApp:
         self.procfilesvar = tk.StringVar()
         self.procdat_entry = ttk.Entry(left_frame, textvariable=self.procfilesvar, width=40)
         self.procdat_entry.pack()
-        # self.mode_button = ttk.Button(self.root, text="Switch to Search Mode", command=self.toggle_mode)
-        # self.mode_button.pack()
+        ttk.Label(left_frame, text="Destination folder").pack()
+        self.find_dest_button = ttk.Button(left_frame, text="Locate Destination Folder", command=self.find_dest_folder)
+        self.find_dest_button.pack()
+        self.dest_entry = ttk.Entry(left_frame, textvariable=self.dest_folder_var, width=40)
+        self.dest_entry.pack()
         self.cal = self.create_calendar_entry("Process start date", left_frame)
         self.hour = self.create_labeled_combobox("Process start hour (0-23)", left_frame, [str(i) for i in range(24)])
 
 
         # Parameter widgets
         self.user_entry = self.create_labeled_entry("User Full Name", left_frame)
-        self.lyo_entry = self.create_labeled_combobox("Lyo Name", left_frame, ["LyoStar3", "REVO", "MicroFD", "LabConco"])
+        self.lyo_entry = self.create_labeled_combobox("Lyo Name", left_frame, self.lyo_defaults)
         self.cont_option = self.create_labeled_combobox("Container Type/Size", center_frame, self.container_defaults)
         self.cont_count = self.create_labeled_entry("Number of Containers/Vials", center_frame)
-        self.formulation_option = self.create_labeled_combobox("Formulation", center_frame, ["Sucrose 5%", "Mannitol 5%", "Sucrose 10%"])
+        self.formulation_option = self.create_labeled_combobox("Formulation", center_frame, self.formulation_defaults)
         self.concentration = self.create_labeled_entry("Total Solids Content (g/mL)", center_frame)
         self.fill = self.create_labeled_entry("Fill Volume (mL)", center_frame)
         self.cin_checkbutton = self.create_labeled_checkbutton("CIN", center_frame)
@@ -139,6 +162,11 @@ class ParamsApp:
         for n in self.procfilenames:
             print(n)
         self.procfilesvar.set(self.procfilenames)
+
+    def find_dest_folder(self):
+        self.dest_folder = filedialog.askdirectory()
+        print(f"Destination folder: {self.dest_folder}")
+        self.dest_folder_var.set(self.dest_folder)
 
    
     def create_calendar_entry(self, text, frame):
@@ -221,12 +249,12 @@ class ParamsApp:
         if len(self.procfilenames) == 1: # If a single string, do once
             name = self.procfilenames[0]
             ext = os.path.splitext(name)[1]
-            shutil.copy(name, os.path.join(self.folder_name, fname_base + ext)) 
+            shutil.copy(name, os.path.join(self.dest_folder, fname_base + ext)) 
             messagebox.showinfo("Complete Success", f"Process file copied to {fname_base}{ext}")
         else:
             for i, name in enumerate(self.procfilenames):
                 ext = os.path.splitext(name)[1]
-                shutil.copy(name, os.path.join(self.folder_name, fname_base + f"_{i+1}" + ext)) 
+                shutil.copy(name, os.path.join(self.dest_folder, fname_base + f"_{i+1}" + ext)) 
             messagebox.showinfo("Complete Success", f"Process files copied to {fname_base}_#{ext}")
 
 
@@ -254,7 +282,8 @@ class ParamsApp:
         elif params["lyophilizer"] == "LabConco":
             lyo_abbrev = "LC"
         else:
-            messagebox.showinfo("Error", f"Invalid lyophilizer name given: {params['lyophilizer']}")
+            messagebox.showinfo("Error", f"Unknown lyophilizer name given: {params['lyophilizer']}. Will be abbreviated by taking capital letters.")
+            lyo_abbrev = "".join([c for c in params["lyophilizer"] if c.isupper()])
             # raise ValueError()
         # now = datetime.now()
         # date = now.strftime("%Y-%m-%d-%H")
@@ -262,10 +291,10 @@ class ParamsApp:
         hour = int(self.hour.get())
         fname_base = f"{date}-{hour:02d}_{lyo_abbrev}_{user_initials}"
         fname = fname_base + ".yaml"
-        # folder_name = os.path.join(sys.path[0] , "..", "AllLyoData")
-        # folder_name = os.path.join(basedir, "..", "AllLyoData")
-        print(self.folder_name)
-        with open(os.path.join(self.folder_name, fname), 'w') as f:
+        # dest_folder = os.path.join(sys.path[0] , "..", "AllLyoData")
+        # dest_folder = os.path.join(basedir, "..", "AllLyoData")
+        print(self.dest_folder)
+        with open(os.path.join(self.dest_folder, fname), 'w') as f:
             yaml.dump(template_params, f)
 
         return fname_base, fname

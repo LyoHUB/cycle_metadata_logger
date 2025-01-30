@@ -5,9 +5,8 @@ lyophilizer: LyoStar
 containers:
   type: SCHOTT 6R
   count: 100
-# List ingredients; concentration is g/mL, so 5% w/v written as 0.05
 fill: 1.5 # Fill in mL
-concentration: .05 # Solids content, in w/v % (e.g. .05g/mL w
+concentration: .05 # Solids content, in g/mL (e.g. .05 means 5%)
 formulation: 1:5 mAb:mannitol
 # Controlled ice nucleation
 CIN: false
@@ -20,7 +19,6 @@ RF:
   power: 50 # Nominal power in watts
   frequency: 8   # Frequency in GHz
 closed loop: false
-# freezethaw:
 comments:
   This is just a demonstration of what we can do in YAML.
   Multiline things work just fine.

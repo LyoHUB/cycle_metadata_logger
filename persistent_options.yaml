@@ -1,0 +1,19 @@
+dest_folder: ./../AllLyoData
+lyophilizer_defaults: 
+  - LyoStar3
+  - REVO
+  - MicroFD
+  - LabConco
+container_defaults:
+  - SCHOTT 2R
+  - SiO2 10mL
+  - SCHOTT 6R
+  - SCHOTT 10R
+formulation_defaults:
+  - Sucrose 5%
+  - Mannitol 5%
+  - Sucrose 10%
+project_defaults:
+  - Rp Study
+  - Stability Study
+  - Design Space 
