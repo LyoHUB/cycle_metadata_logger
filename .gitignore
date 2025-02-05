@@ -1,6 +1,7 @@
 # Exclude YAML files from GitHub sync
 # *.yaml
 # Exclude build files
+*.exe
 build
 dist
 __pycache__
