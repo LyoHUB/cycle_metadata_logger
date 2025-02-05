@@ -34,22 +34,20 @@ then pull them down to the instance of this repo on `depot\lyohub\data\cycle_met
 Then, follow an appropriate set of instructions below.
 Be warned that if you use a `git pull` to copy the files, this will likely override the `persistent_options.yaml` which is currently there. It would be prudent to make a copy of that file elsewhere, update, then put the desired version back in.
 
+### Installation
 
-### Windows 7 install
+### Windows 7 (or presumably other OS) install
 1. Log onto a computer with Windows 7 (any of the ones in the lab could be used, but the FDM computer already has everything necessary installed)
-1. Open PowerShell
-1. In PowerShell: Navigate to the repo directory on the LyoHUB remote drive
-1. In PowerShell: Update the repo to match GitHub, e.g. with `git pull`
-1. In PowerShell: Run `pyinstaller metadata_writer.spec`
-1. In a regular file explorer window, find the executable in `depot\lyohub\data\cycle_metadata_logger\dist`, and check its file permissions: "everyone" should be able to "read and execute" (this is not the default)
+1. Download this repository, then navigate to its base directory
+1. In a terminal with Python, run `pyinstaller metadata_writer.spec`
+1. In a regular file explorer window, find the executable in `cycle_metadata_logger\dist`, and check its file permissions: "everyone" should be able to "read and execute" (this is not the default)
 1. Place the desired copy of `persistent_options.yaml` in the directory with the executable
 
 ### Windows 10
-1. Add a Release on GitHub (create a tag for the new version, while you're at it)
-1. Give GitHub Actions a minute or two to run
+1. Download `metadata_writer.exe` from the most recent release on GitHub
 1. Look at the release to find the executable
 1. Download the executable and place where you want it
 
-## Improvements to be made:
+## Wishlist:
 
-- Add a search capability to identify historical runs with particular sets of metadata, e.g. for a specific project or using a particular formulation.
+- Add a search capability across a folder of metadata to identify historical runs with particular sets of metadata, e.g. for a specific project or using a particular formulation.
