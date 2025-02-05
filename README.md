@@ -4,9 +4,8 @@ An initial draft was authored by Petr Kazarin and ChatGPT; expanded significantl
 
 ## What you do:
 
-1. Find `Z:\data\metadata_writer.exe - Shortcut`
-1. Execute the shortcut
-1. Fill out all the run information
+1. Download the file
+1. Fill out all the run information, including indicating process data files and a folder to save the metadata
 1. Click "Finish"
 
 ## What you get:
@@ -25,7 +24,7 @@ multiple will be named `YYYY-MM-DD-HH_LYO_UU_1.csv`, `YYYY-MM-DD-HH_LYO_UU_2.csv
 
 ## Default options
 For the early life of this system, the choices of lyophilizer, formulation, project, and container size had defaults hardcoded into the program. The directory in which files would be saved was likewise hardcoded.
-As of 0.2, however, if the executable finds a file called `persistent_options.yaml`, it will read in that file.
+As of 0.4, however, if the executable finds a file called `persistent_options.yaml`, it will read in that file.
 You can open that file and add or remove items from that list to add or remove items from the dropdown boxes, as suits your convenience.
 
 ## How to improve this system:
@@ -43,6 +42,7 @@ Be warned that if you use a `git pull` to copy the files, this will likely overr
 1. In PowerShell: Update the repo to match GitHub, e.g. with `git pull`
 1. In PowerShell: Run `pyinstaller metadata_writer.spec`
 1. In a regular file explorer window, find the executable in `depot\lyohub\data\cycle_metadata_logger\dist`, and check its file permissions: "everyone" should be able to "read and execute" (this is not the default)
+1. Place the desired copy of `persistent_options.yaml` in the directory with the executable
 
 ### Windows 10
 1. Add a Release on GitHub (create a tag for the new version, while you're at it)
