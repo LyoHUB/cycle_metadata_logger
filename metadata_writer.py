@@ -10,12 +10,9 @@ import shutil
 from datetime import datetime
 
 yaml = YAML(typ='rt')
-if getattr(sys, 'frozen', False):
-    # Running as executable
-    basedir = os.path.join(os.path.dirname(sys.executable), "..")
-elif __file__:
-    # Running as Python file
-    basedir = os.path.dirname(__file__)
+
+bundle_dir = os.path.abspath(os.path.dirname(__file__))
+template_file = os.path.join(bundle_dir, "metadata_template.yaml")
 
 class ParamsApp:
     def __init__(self, root):
@@ -29,21 +26,16 @@ class ParamsApp:
 
         self.style = ttk.Style()
         self.style.configure("Basic", background="#FAFAFA", font=("Helvetica", 12))
-        # Set font
-        # self.font = ("Helvetica", 12)
         
         # Get some default settings
         self.get_defaults()
 
-        # Set background color
-        # self.bg_color = "#FAFAFA"
-        # self.root.configure(bg=self.bg_color)
         # Create GUI elements
         self.create_gui_elements()
 
     def get_defaults(self):
         try:
-            with open(os.path.join(basedir, "persistent_options.yaml")) as f:
+            with open(os.path.join(bundle_dir, "persistent_options.yaml")) as f:
                 options = yaml.load(f)
         except:
 
@@ -52,7 +44,7 @@ class ParamsApp:
                         "lyophilizer_defaults": ["LyoStar3", "REVO", "MicroFD", "LabConco"],
                         "formulation_defaults": ["Sucrose 5%", "Mannitol 5%", "Sucrose 10%"],
                         "project_defaults": ["RF", "Strain Gauge"],
-                        "dest_folder": os.path.join(basedir, "..", "AllLyoData"),
+                        "dest_folder": os.path.join(bundle_dir, "..", "AllLyoData"),
             }
             
         self.container_defaults = options["container_defaults"]
@@ -60,7 +52,7 @@ class ParamsApp:
         self.formulation_defaults = options["formulation_defaults"]
         self.dest_folder = options["dest_folder"]
         if self.dest_folder[1] == ".":
-            self.dest_folder = os.path.join(basedir, options["dest_folder"])
+            self.dest_folder = os.path.join(bundle_dir, options["dest_folder"])
 
         self.dest_folder_var = tk.StringVar()
         self.dest_folder_var.set(self.dest_folder)
@@ -128,10 +120,6 @@ class ParamsApp:
         self.closed_loop_checkbutton = self.create_labeled_checkbutton("Closed-Loop", right_frame)
 
         self.comments_entry = self.create_labeled_entry("Comments", right_frame)
-        # ttk.Label(self.root, text="Comments").pack()
-        # self.comments_entry = tk.Text(self.root, height=2, width=15)
-        # self.comments_entry.pack()
-
 
         # Search results
         # self.results_text = tk.Text(self.root)
@@ -261,13 +249,12 @@ class ParamsApp:
         self.root.quit()
 
     def write_to_yaml(self, params):
-        with open(os.path.join(basedir, "metadata_template.yaml")) as f:
+        with open(template_file) as f:
             template_params = yaml.load(f)
 
         if not set(template_params.keys()).issubset(params.keys()):
             print(params.keys())
             messagebox.showinfo("Error", "Not all fields in template are being written.\n(Software error: let Isaac know)")
-            # raise ValueError("Not all fields in template are being written.")
 
         for key in params.keys():
             template_params[key] = params[key]
@@ -284,15 +271,10 @@ class ParamsApp:
         else:
             messagebox.showinfo("Error", f"Unknown lyophilizer name given: {params['lyophilizer']}. Will be abbreviated by taking capital letters.")
             lyo_abbrev = "".join([c for c in params["lyophilizer"] if c.isupper()])
-            # raise ValueError()
-        # now = datetime.now()
-        # date = now.strftime("%Y-%m-%d-%H")
         date = self.cal.get_date().strftime("%Y-%m-%d")
         hour = int(self.hour.get())
         fname_base = f"{date}-{hour:02d}_{lyo_abbrev}_{user_initials}"
         fname = fname_base + ".yaml"
-        # dest_folder = os.path.join(sys.path[0] , "..", "AllLyoData")
-        # dest_folder = os.path.join(basedir, "..", "AllLyoData")
         print(self.dest_folder)
         with open(os.path.join(self.dest_folder, fname), 'w') as f:
             yaml.dump(template_params, f)
