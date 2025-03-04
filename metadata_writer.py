@@ -12,6 +12,9 @@ from datetime import datetime
 yaml = YAML(typ='rt')
 
 bundle_dir = os.path.abspath(os.path.dirname(__file__))
+application_dir = os.path.abspath(os.path.dirname(sys.argv[0]))
+print("Bundle dir: ", bundle_dir)
+print("Application dir: ", application_dir)
 template_file = os.path.join(bundle_dir, "metadata_template.yaml")
 
 class ParamsApp:
@@ -35,7 +38,7 @@ class ParamsApp:
 
     def get_defaults(self):
         try:
-            with open(os.path.join(bundle_dir, "persistent_options.yaml")) as f:
+            with open(os.path.join(application_dir, "persistent_options.yaml")) as f:
                 options = yaml.load(f)
         except:
 
