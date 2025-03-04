@@ -53,6 +53,7 @@ class ParamsApp:
         self.container_defaults = options["container_defaults"]
         self.lyo_defaults = options["lyophilizer_defaults"]
         self.formulation_defaults = options["formulation_defaults"]
+        self.project_defaults = options["project_defaults"]
         self.dest_folder = options["dest_folder"]
         if self.dest_folder[1] == ".":
             self.dest_folder = os.path.join(bundle_dir, options["dest_folder"])
@@ -98,7 +99,7 @@ class ParamsApp:
         self.cin_checkbutton = self.create_labeled_checkbutton("CIN", center_frame)
         self.annealing_checkbutton = self.create_labeled_checkbutton("Annealing", center_frame)
         self.freezethaw_checkbutton = self.create_labeled_checkbutton("Freeze-thaw", center_frame)
-        self.project_option = self.create_labeled_combobox("Project", right_frame, ["NIIMBL RF", "Strain Gauge"])
+        self.project_option = self.create_labeled_combobox("Project", right_frame, self.project_defaults)
 
         # RF/MW Run? options
         self.is_rf_mw_run = tk.BooleanVar()
