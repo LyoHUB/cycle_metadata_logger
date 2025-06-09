@@ -1,4 +1,4 @@
-dest_folder: ./../AllLyoData
+dest_folder: ./
 lyophilizer_defaults: 
   - LyoStar3
   - REVO
@@ -6,14 +6,15 @@ lyophilizer_defaults:
   - LabConco
 container_defaults:
   - SCHOTT 2R
-  - SiO2 10mL
   - SCHOTT 6R
   - SCHOTT 10R
+  - SiO2 10mL
+  - Amber 10mL
 formulation_defaults:
-  - Sucrose 5%
-  - Mannitol 5%
-  - Sucrose 10%
+  - Sucrose
+  - Mannitol
+  - Sucrose
 project_defaults:
-  - Rp Study
-  - Stability Study
+  - Fulbright
+  - RF
   - Design Space 

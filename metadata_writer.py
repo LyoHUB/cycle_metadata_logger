@@ -38,6 +38,7 @@ class ParamsApp:
 
     def get_defaults(self):
         try:
+            print("Looking for persistent options YAML in ", os.path.join(application_dir, "persistent_options.yaml"))
             with open(os.path.join(application_dir, "persistent_options.yaml")) as f:
                 options = yaml.load(f)
         except:
@@ -45,7 +46,7 @@ class ParamsApp:
             messagebox.showinfo("Minor error", "No YAML found for persistent options. Defaulting to hard-coded ones.")
             options = {"container_defaults": ["SCHOTT 2R", "SCHOTT 6R", "SCHOTT 10R", "SiO2 10mL"],
                         "lyophilizer_defaults": ["LyoStar3", "REVO", "MicroFD", "LabConco"],
-                        "formulation_defaults": ["Sucrose 5%", "Mannitol 5%", "Sucrose 10%"],
+                        "formulation_defaults": ["Sucrose", "Mannitol"],
                         "project_defaults": ["RF", "Strain Gauge"],
                         "dest_folder": os.path.join(bundle_dir, "..", "AllLyoData"),
             }
