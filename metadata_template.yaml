@@ -18,6 +18,8 @@ freezethaw: false
 RF:
   power: 50 # Nominal power in watts
   frequency: 8   # Frequency in GHz
+beads:
+  size: 40.0
 closed loop: false
 comments:
   This is just a demonstration of what we can do in YAML.
