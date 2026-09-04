@@ -22,6 +22,7 @@ class ParamsApp:
         self.root = root
         self.rfmw_entries = []
         self.bead_entries = []
+        self.procfilenames = []
         self.params = {}
         self.mode = "write"  # starts in 'write' mode
 
@@ -87,7 +88,8 @@ class ParamsApp:
         self.dest_entry = ttk.Entry(left_frame, textvariable=self.dest_folder_var, width=40)
         self.dest_entry.pack()
         self.cal = self.create_calendar_entry("Process start date", left_frame)
-        self.hour = self.create_labeled_combobox("Process start hour (0-23)", left_frame, [str(i) for i in range(24)])
+        current_hour = datetime.now().strftime("%H")
+        self.hour = self.create_labeled_combobox("Process start hour (0-23)", left_frame, [str(i).zfill(2) for i in range(24)], default=current_hour)
 
 
         # Parameter widgets
@@ -105,10 +107,6 @@ class ParamsApp:
 
         # RF/MW Run? options
         self.is_rf_mw_run = tk.BooleanVar()
-        # label = ttk.Label(right_frame, text="RF/MW Run?", )
-        # label.pack()
-        # yes_option = ttk.Radiobutton(right_frame, text="Yes", variable=self.is_rf_mw_run, value=True, command=self.toggle_rf_mw_entries, )
-        # no_option = ttk.Radiobutton(right_frame, text="No", variable=self.is_rf_mw_run, value=False, command=self.toggle_rf_mw_entries)
         rf_mw_option = ttk.Checkbutton(right_frame, text="RF/MW Run?", variable=self.is_rf_mw_run, command=self.toggle_rf_mw_entries, )
         rf_mw_option.pack()
 
@@ -201,11 +199,14 @@ class ParamsApp:
         entry.pack()
         return entry
 
-    def create_labeled_combobox(self, text, frame, options):
+    def create_labeled_combobox(self, text, frame, options, default=None):
         label = ttk.Label(frame, text=text)
         label.pack()
         combo_box = ttk.Combobox(frame, values=options)
-        combo_box.set(options[0])  # default value
+        if default == None:
+            combo_box.set(options[0])  # default value
+        else:
+            combo_box.set(default)
         combo_box.pack()
         return combo_box
 
@@ -266,35 +267,35 @@ class ParamsApp:
         datetime_str = now.strftime("%Y-%m-%d %H:%M")
         self.params['timestamp'] = datetime_str
 
-        fname_base, fname_yaml = self.write_to_yaml(self.params)
 
-        messagebox.showinfo("Partial Success", f"Parameters saved to {fname_yaml}")
+        fname_base = self.make_filename(self.params)
+        subfolder = os.path.join(self.dest_folder, fname_base)
+        print(subfolder)
+        try:
+            os.mkdir(subfolder)
+        except FileNotFoundError:
+            messagebox.showinfo("Error", f"Destination folder {self.dest_folder} does not exist. Adjust and try again.")
+            return
+        except FileExistsError:
+            if messagebox.askokcancel("Warning", f"Metadata folder {subfolder} already exists. Moving ahead will likely overwrite an existing metadata file. Proceed?"):
+                pass # user clicked OK: move on to save everything
+            else:
+                return # user clicked Cancle: don't save anything, let user keep using GUI
 
-        if len(self.procfilenames) == 1: # If a single string, do once
-            name = self.procfilenames[0]
-            ext = os.path.splitext(name)[1]
-            shutil.copy(name, os.path.join(self.dest_folder, fname_base + ext)) 
-            messagebox.showinfo("Complete Success", f"Process file copied to {fname_base}{ext}")
-        else:
-            for i, name in enumerate(self.procfilenames):
-                ext = os.path.splitext(name)[1]
-                shutil.copy(name, os.path.join(self.dest_folder, fname_base + f"_{i+1}" + ext)) 
-            messagebox.showinfo("Complete Success", f"Process files copied to {fname_base}_#{ext}")
+        fname_yaml = self.write_to_yaml(self.params)
+
+        yamlsave_msg = "Partial Success" if len(self.procfilenames) > 0 else "Success" 
+        messagebox.showinfo(yamlsave_msg, f"Parameters saved to {fname_base}/{fname_yaml}")
+
+        if len(self.procfilenames) > 0:
+            for name in self.procfilenames:
+                shutil.copy(name, os.path.join(subfolder, name)) 
+            messagebox.showinfo("Complete Success", f"Process files copied to folder {subfolder}")
 
 
         self.root.quit()
 
-    def write_to_yaml(self, params):
-        with open(template_file) as f:
-            template_params = yaml.load(f)
-
-        if not set(template_params.keys()).issubset(params.keys()):
-            print(params.keys())
-            messagebox.showinfo("Error", "Not all fields in template are being written.\n(Software error: let Isaac know)")
-
-        for key in params.keys():
-            template_params[key] = params[key]
-
+    def make_filename(self, params):
         user_initials = ''.join([w[0].capitalize() for w in params['user'].split(" ")])
         if params["lyophilizer"] == "LyoStar3":
             lyo_abbrev = "LS"
@@ -309,13 +310,28 @@ class ParamsApp:
             lyo_abbrev = "".join([c for c in params["lyophilizer"] if c.isupper()])
         date = self.cal.get_date().strftime("%Y-%m-%d")
         hour = int(self.hour.get())
-        fname_base = f"{date}-{hour:02d}_{lyo_abbrev}_{user_initials}"
+        fname = f"{date}-{hour:02d}_{lyo_abbrev}_{user_initials}"
+        return fname
+
+
+    def write_to_yaml(self, params):
+        with open(template_file) as f:
+            template_params = yaml.load(f)
+
+        if not set(template_params.keys()).issubset(params.keys()):
+            print(params.keys())
+            messagebox.showinfo("Error", "Not all fields in template are being written.\n(Software error: let Isaac know)")
+
+        for key in params.keys():
+            template_params[key] = params[key]
+
+        fname_base = self.make_filename(params)
+
         fname = fname_base + ".yaml"
-        print(self.dest_folder)
-        with open(os.path.join(self.dest_folder, fname), 'w') as f:
+        with open(os.path.join(self.dest_folder, fname_base, fname), 'w') as f:
             yaml.dump(template_params, f)
 
-        return fname_base, fname
+        return fname
 
 root = tk.Tk()
 app = ParamsApp(root)
