@@ -21,6 +21,7 @@ class ParamsApp:
     def __init__(self, root):
         self.root = root
         self.rfmw_entries = []
+        self.bead_entries = []
         self.params = {}
         self.mode = "write"  # starts in 'write' mode
 
@@ -104,12 +105,12 @@ class ParamsApp:
 
         # RF/MW Run? options
         self.is_rf_mw_run = tk.BooleanVar()
-        label = ttk.Label(right_frame, text="RF/MW Run?", )
-        label.pack()
-        yes_option = ttk.Radiobutton(right_frame, text="Yes", variable=self.is_rf_mw_run, value=True, command=self.toggle_rf_mw_entries, )
-        no_option = ttk.Radiobutton(right_frame, text="No", variable=self.is_rf_mw_run, value=False, command=self.toggle_rf_mw_entries)
-        yes_option.pack()
-        no_option.pack()
+        # label = ttk.Label(right_frame, text="RF/MW Run?", )
+        # label.pack()
+        # yes_option = ttk.Radiobutton(right_frame, text="Yes", variable=self.is_rf_mw_run, value=True, command=self.toggle_rf_mw_entries, )
+        # no_option = ttk.Radiobutton(right_frame, text="No", variable=self.is_rf_mw_run, value=False, command=self.toggle_rf_mw_entries)
+        rf_mw_option = ttk.Checkbutton(right_frame, text="RF/MW Run?", variable=self.is_rf_mw_run, command=self.toggle_rf_mw_entries, )
+        rf_mw_option.pack()
 
         # RF/MW fields
         self.rfmw_labels = ['Power (W)', 'Frequency (GHz)']
@@ -117,6 +118,21 @@ class ParamsApp:
             label = ttk.Label(right_frame, text=label_text, )
             entry = ttk.Entry(right_frame, state='disabled', )
             self.rfmw_entries.append(entry)
+
+            label.pack()
+            entry.pack()
+
+        # Bead Run? options
+        self.is_bead_run = tk.BooleanVar()
+        bead_option = ttk.Checkbutton(right_frame, text="Bead Run?", variable=self.is_bead_run, command=self.toggle_bead_entries, )
+        bead_option.pack()
+
+        # Bead fields
+        self.bead_labels = ['Bead size (uL)']
+        for label_text in self.bead_labels:
+            label = ttk.Label(right_frame, text=label_text, )
+            entry = ttk.Entry(right_frame, state='disabled', )
+            self.bead_entries.append(entry)
 
             label.pack()
             entry.pack()
@@ -142,11 +158,19 @@ class ParamsApp:
     #         self.finish_button.config(text="FINISH", command=self.finish)
 
     def toggle_rf_mw_entries(self):
-        if self.is_rf_mw_run.get() == 1:
+        if self.is_rf_mw_run.get():
             for entry in self.rfmw_entries:
                 entry.config(state='normal')
         else:
             for entry in self.rfmw_entries:
+                entry.config(state='disabled')
+
+    def toggle_bead_entries(self):
+        if self.is_bead_run.get():
+            for entry in self.bead_entries:
+                entry.config(state='normal')
+        else:
+            for entry in self.bead_entries:
                 entry.config(state='disabled')
 
     def find_procdat(self):
@@ -218,6 +242,13 @@ class ParamsApp:
                 params["RF"][name.lower().split(" ")[1]] = float(entry.get())
         else:
             params["RF"] = False
+        if self.is_bead_run.get():
+            # rfmw_params = {self.rfmw_labels[i]: entry.get() for i, entry in enumerate(self.rfmw_entries)}
+            params["beads"] = {}
+            for name, entry in zip(self.bead_labels, self.bead_entries):
+                params["beads"][name.lower().split(" ")[1]] = float(entry.get())
+        else:
+            params["beads"] = False
 
         # params.update(rfmw_params)
 
