@@ -217,13 +217,23 @@ class ParamsApp:
         return var
 
     def read_state(self): 
+        def tryfloat(v):
+            try:
+                return float(v)
+            finally:
+                return v
+        def tryint(v):
+            try: 
+                return int(v)
+            finally:
+                return v
         params = {
             'start date' : self.cal.get_date(),
             'user': self.user_entry.get(),
             'lyophilizer': self.lyo_entry.get(),
             'formulation': self.formulation_option.get(),
-            'concentration': float(self.concentration.get()),
-            'fill': float(self.fill.get()),
+            'concentration': tryfloat(self.concentration.get()),
+            'fill': tryfloat(self.fill.get()),
             'CIN': self.cin_checkbutton.get(),
             'annealing': self.annealing_checkbutton.get(),
             'closed loop' : self.closed_loop_checkbutton.get(),
@@ -235,19 +245,19 @@ class ParamsApp:
         
         params['containers'] = {}
         params['containers']['type'] = self.cont_option.get()
-        params['containers']['count'] = int(self.cont_count.get())
+        params['containers']['count'] = tryint(self.cont_count.get())
         if self.is_rf_mw_run.get():
             # rfmw_params = {self.rfmw_labels[i]: entry.get() for i, entry in enumerate(self.rfmw_entries)}
             params["RF"] = {}
             for name, entry in zip(self.rfmw_labels, self.rfmw_entries):
-                params["RF"][name.lower().split(" ")[1]] = float(entry.get())
+                params["RF"][name.lower().split(" ")[1]] = tryfloat(entry.get())
         else:
             params["RF"] = False
         if self.is_bead_run.get():
             # rfmw_params = {self.rfmw_labels[i]: entry.get() for i, entry in enumerate(self.rfmw_entries)}
             params["beads"] = {}
             for name, entry in zip(self.bead_labels, self.bead_entries):
-                params["beads"][name.lower().split(" ")[1]] = float(entry.get())
+                params["beads"][name.lower().split(" ")[1]] = tryfloat(entry.get())
         else:
             params["beads"] = False
 
@@ -289,7 +299,8 @@ class ParamsApp:
 
         if len(self.procfilenames) > 0:
             for name in self.procfilenames:
-                shutil.copy(name, os.path.join(subfolder, name)) 
+                origpath, origfile = os.file.split(name)
+                shutil.copy(name, os.path.join(subfolder, origfile)) 
             messagebox.showinfo("Complete Success", f"Process files copied to folder {subfolder}")
 
 
