@@ -299,7 +299,7 @@ class ParamsApp:
 
         if len(self.procfilenames) > 0:
             for name in self.procfilenames:
-                origpath, origfile = os.file.split(name)
+                origpath, origfile = os.path.split(name)
                 shutil.copy(name, os.path.join(subfolder, origfile)) 
             messagebox.showinfo("Complete Success", f"Process files copied to folder {subfolder}")
 
